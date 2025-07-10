@@ -1,0 +1,21 @@
+import pandas as pd
+
+# Load your file
+df = pd.read_csv("Car_sales.csv")
+
+# Rename columns for easier access
+df.columns = [col.strip().replace(" ", "_").replace("-", "_").replace("__", "") for col in df.columns]
+
+# Convert date column
+df['Latest_Launch'] = pd.to_datetime(df['Latest_Launch'], errors='coerce')
+
+# Fill missing values
+df['Sales_in_thousands'] = df['Sales_in_thousands'].fillna(0)
+df['Price_in_thousands'] = df['Price_in_thousands'].fillna(df['Price_in_thousands'].median())
+df['year_resale_value'] = df['year_resale_value'].fillna(df['year_resale_value'].median())
+
+# Create new column for revenue (in millions)
+df['Revenue_in_millions'] = (df['Sales_in_thousands'] * df['Price_in_thousands']) / 1000
+
+# Save cleaned file for Power BI
+df.to_csv("Cleaned_Car_Sales.csv", index=False)
